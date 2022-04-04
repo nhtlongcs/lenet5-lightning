@@ -116,7 +116,7 @@ class Base(pl.LightningModule):
             if isinstance(score, (int, float)):
                 log_string += metric + ": " + f"{score:.5f}" + " | "
         log_string += "\n"
-        print(log_string)
+        # print(log_string)
 
         # 4. Reset metric
         for m in self.metric.keys():
@@ -132,7 +132,8 @@ class Base(pl.LightningModule):
 
     def train_dataloader(self):
         train_loader = DataLoader(
-            **self.cfg["data"]["args"]["train"]["loader"], dataset=self.mnist_train,
+            **self.cfg["data"]["args"]["train"]["loader"],
+            dataset=self.mnist_train,
         )
         return train_loader
 
@@ -144,7 +145,8 @@ class Base(pl.LightningModule):
 
     def test_dataloader(self):
         test_loader = DataLoader(
-            **self.cfg["data"]["args"]["test"]["loader"], dataset=self.mnist_test,
+            **self.cfg["data"]["args"]["test"]["loader"],
+            dataset=self.mnist_test,
         )
         return test_loader
 
@@ -165,4 +167,3 @@ class Base(pl.LightningModule):
             "optimizer": optimizer,
             "lr_scheduler": {"scheduler": scheduler, "interval": "step"},
         }
-

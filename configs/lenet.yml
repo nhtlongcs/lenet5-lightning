@@ -1,6 +1,6 @@
 global:
   username: nhtlong
-  name: "template"
+  name: LeNet
   save_dir: ./runs
   use_fp16: true
   debug: false
