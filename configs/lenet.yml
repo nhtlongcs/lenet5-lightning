@@ -1,5 +1,5 @@
 global:
-  username: nhtlongcs
+  username: nhtlong
   name: "template"
   save_dir: ./runs
   use_fp16: true

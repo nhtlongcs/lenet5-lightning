@@ -9,7 +9,6 @@ from pytorch_lightning.trainer import seed_everything
 from src.models import MODEL_REGISTRY
 from src.callbacks import CALLBACKS_REGISTRY
 from src.utils.path import prepare_checkpoint_path
-from pytorch_lightning.callbacks import RichProgressBar
 
 
 def train(config):
@@ -27,7 +26,6 @@ def train(config):
         CALLBACKS_REGISTRY.get(mcfg["name"])(**mcfg["args"])
         for mcfg in config["callbacks"]
     ]
-    callbacks.append(RichProgressBar())
 
     Wlogger = WandbLogger(
         project="vnu-tgmt",
