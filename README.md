@@ -1,5 +1,7 @@
 # LetNet Pytorch Lightning
 
+This work is an unofficial implementation of LeNet5 on MNIST dataset, which is computer vision coursework.
+
 Before using this repo, please install the following packages by running the following commands:
 
 ```bash
@@ -10,10 +12,16 @@ pip install -e .
 Or if you are using a colab (cannot install by conda), you can install the packages by running the following commands:
 
 ```bash
-
+pip install -r requirements.txt
+pip install -e .
 ```
 
-[colab](https://colab.research.google.com/drive/18Jmz-e4AvH1QAG_WVZqjlT3XgnPcWOMY)
+[Wandb](https://wandb.ai/nhtlong/vnu-tgmt)
+
+</p>
+<a href="https://colab.research.google.com/github/nhtlongcs/lenet5-lightning/blob/master/notebook/LeNet5.ipynb">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a>
 
 ## Inference
 
