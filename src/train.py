@@ -29,16 +29,16 @@ def train(config):
     ]
     callbacks.append(RichProgressBar())
 
-    # Wlogger = WandbLogger(
-    #     project="vnu-tgmt",
-    #     name=train_id,
-    #     save_dir=config["global"]["save_dir"],
-    #     log_model="all",
-    #     entity=config["global"]["username"],
-    # )
+    Wlogger = WandbLogger(
+        project="vnu-tgmt",
+        name=train_id,
+        save_dir=config["global"]["save_dir"],
+        log_model="all",
+        entity=config["global"]["username"],
+    )
 
-    # # Save config to wandb
-    # Wlogger.experiment.config.update(config)
+    # Save config to wandb
+    Wlogger.experiment.config.update(config)
 
     trainer = pl.Trainer(
         max_epochs=config.trainer["num_epochs"],
@@ -50,7 +50,7 @@ def train(config):
         sync_batchnorm=True if torch.cuda.device_count() > 1 else False,
         precision=16 if config["global"]["use_fp16"] else 32,
         fast_dev_run=config["global"]["debug"],
-        # logger=Wlogger,
+        logger=Wlogger,
         callbacks=callbacks,
         num_sanity_val_steps=-1,  # Sanity full validation required for visualization callbacks
         deterministic=True,
