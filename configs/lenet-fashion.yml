@@ -8,6 +8,11 @@ global:
   SEED: 1337
   pretrained: null
   resume: null
+model:
+  name: Lenet
+  args:
+    IMG_SIZE: 28
+    NUM_CLASS: 10
 data:
   data_dir: ./data/
   image_size: 28
@@ -31,10 +36,6 @@ data:
         num_workers: 2
         shuffle: False
         drop_last: False
-model:
-  name: Lenet
-  args:
-    NUM_CLASS: 10
 metric:
   - name: Accuracy
     args:

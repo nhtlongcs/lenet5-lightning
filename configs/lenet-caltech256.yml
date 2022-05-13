@@ -8,20 +8,25 @@ global:
   SEED: 1337
   pretrained: null
   resume: null
+model:
+  name: Lenet
+  args:
+    IMG_SIZE: 128
+    NUM_CLASS: 257
 data:
   data_dir: ./data/
-  image_size: 28
+  image_size: 128
   name: caltech256
   args:
     train:
       loader:
-        batch_size: 256
+        batch_size: 32
         num_workers: 2
         shuffle: True
         drop_last: True
     val:
       loader:
-        batch_size: 256
+        batch_size: 32
         num_workers: 2
         shuffle: False
         drop_last: False
@@ -31,10 +36,6 @@ data:
         num_workers: 2
         shuffle: False
         drop_last: False
-model:
-  name: Lenet
-  args:
-    NUM_CLASS: 257
 metric:
   - name: Accuracy
     args:

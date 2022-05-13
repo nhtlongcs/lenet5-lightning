@@ -18,7 +18,8 @@ class Lenet(Base):
     def compute_loss(self, y_hat, y, **kwargs):
         return self.loss(y_hat, y.long())
 
-    def init_model(self, NUM_CLASS):
+    def init_model(self, NUM_CLASS, IMG_SIZE):
+        self.n_classes = NUM_CLASS
         self.conv1 = torch.nn.Conv2d(
             in_channels=1, out_channels=6, kernel_size=5, stride=1, padding=2, bias=True
         )
@@ -36,28 +37,36 @@ class Lenet(Base):
         # Max-pooling
         self.max_pool_2 = torch.nn.MaxPool2d(kernel_size=2)
         # Fully connected layer
+        hidden_size = (IMG_SIZE // 2 - 4) // 2
+        print('hidden ===========> ', hidden_size)
+        hidden_size = hidden_size * hidden_size * 16
         self.fc1 = torch.nn.Linear(
-            16 * 5 * 5, 120
+            hidden_size, 120
         )  # convert matrix with 16*5*5 (= 400) features to a matrix of 120 features (columns)
         self.fc2 = torch.nn.Linear(
             120, 84
         )  # convert matrix with 120 features to a matrix of 84 features (columns)
         self.fc3 = torch.nn.Linear(
-            84, NUM_CLASS
+            84, self.n_classes
         )  # convert matrix with 84 features to a matrix of 10 features (columns)
 
         self.loss = CrossEntropyLoss()
 
     def forward(self, x):
-        x = F.relu(self.conv1(x))
+         
+        x = F.relu(self.conv1(x)) # (batch_size, 6, IMG_SIZE, IMG_SIZE)
+        
         # max-pooling with 2x2 grid
-        x = self.max_pool_1(x)
+        x = self.max_pool_1(x) # (batch_size, 6, IMG_SIZE // 2, IMG_SIZE // 2)
+        
         # convolve, then perform ReLU non-linearity
-        x = F.relu(self.conv2(x))
+        x = F.relu(self.conv2(x))  # (batch_size, 16, IMG_SIZE -4, IMG_SIZE -4)
+        
         # max-pooling with 2x2 grid
-        x = self.max_pool_2(x)
-        # first flatten 'max_pool_2_out' to contain 16*5*5 columns
-        x = x.view(-1, 16 * 5 * 5)
+        x = self.max_pool_2(x)  # (batch_size, 16, IMG_SIZE // 2, IMG_SIZE // 2)
+        
+        # first flatten 'max_pool_2_out' to contain batchsize x other columns
+        x = x.view(x.shape[0], -1)
         # FC-1, then perform ReLU non-linearity
         x = F.relu(self.fc1(x))
         # FC-2, then perform ReLU non-linearity
