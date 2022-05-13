@@ -10,8 +10,8 @@ global:
   resume: null
 data:
   data_dir: ./data/
-  image_size: 32
-  name: MNIST
+  image_size: 28
+  name: fashion_mnist
   args:
     train:
       loader:

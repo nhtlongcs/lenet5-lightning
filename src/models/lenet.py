@@ -18,7 +18,7 @@ class Lenet(Base):
     def compute_loss(self, y_hat, y, **kwargs):
         return self.loss(y_hat, y.long())
 
-    def init_model(self):
+    def init_model(self, NUM_CLASS):
         self.conv1 = torch.nn.Conv2d(
             in_channels=1, out_channels=6, kernel_size=5, stride=1, padding=2, bias=True
         )
@@ -43,7 +43,7 @@ class Lenet(Base):
             120, 84
         )  # convert matrix with 120 features to a matrix of 84 features (columns)
         self.fc3 = torch.nn.Linear(
-            84, 10
+            84, NUM_CLASS
         )  # convert matrix with 84 features to a matrix of 10 features (columns)
 
         self.loss = CrossEntropyLoss()

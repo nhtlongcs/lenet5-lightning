@@ -3,7 +3,7 @@ from typing import Any
 
 import pytorch_lightning as pl
 import torch
-from torchvision.datasets import MNIST
+from torchvision.datasets import MNIST, FashionMNIST
 from src.metrics import METRIC_REGISTRY
 import torchvision
 from torch.utils.data import DataLoader, random_split
@@ -11,8 +11,13 @@ from src.utils.device import detach
 from torch.utils.data import DataLoader
 
 from . import MODEL_REGISTRY
+from .dataset import Caltech256
 
-
+dataset_factory = {
+    'mnist': MNIST,
+    'fashion_mnist': FashionMNIST,
+    'caltech256': Caltech256
+}
 @MODEL_REGISTRY.register()
 class Base(pl.LightningModule):
     def __init__(self, config):
@@ -20,7 +25,8 @@ class Base(pl.LightningModule):
         self.save_hyperparameters()
         self.cfg = config
         self.data_dir = config["data"]["data_dir"]
-        self.init_model()
+        self.dataset_name = config["data"]["name"]
+        self.init_model(**config["model"]["args"])
         self.learning_rate = self.cfg.trainer["lr"]
 
     @abc.abstractmethod
@@ -31,6 +37,11 @@ class Base(pl.LightningModule):
         # download
         MNIST(self.data_dir, train=True, download=True)
         MNIST(self.data_dir, train=False, download=True)
+        # # download
+        FashionMNIST(self.data_dir, train=True, download=True)
+        FashionMNIST(self.data_dir, train=False, download=True)
+        # # download
+        Caltech256(self.data_dir, download=True)
 
     def setup(self, stage=None):
         # Assign train/val datasets for use in dataloaders
@@ -38,25 +49,30 @@ class Base(pl.LightningModule):
 
         self.transform = torchvision.transforms.Compose(
             [
-                # torchvision.transforms.Resize((image_size, image_size)),
+                torchvision.transforms.Grayscale(num_output_channels=1),
+                torchvision.transforms.Resize((image_size, image_size)),
                 torchvision.transforms.ToTensor(),
-                # torchvision.transforms.Normalize((0.1307,), (0.3081,)),
+                torchvision.transforms.Normalize((0.1307,), (0.3081,)),
             ]
         )
         if stage == "fit" or stage is None:
-            mnist_full = MNIST(self.data_dir, train=True, transform=self.transform)
-            total_len = len(mnist_full)
+            if self.dataset_name == "caltech256":
+                dataset_full = Caltech256(self.data_dir, transform=self.transform)
+            else: 
+                dataset_full = dataset_factory[self.dataset_name](self.data_dir, train=True, transform=self.transform)
+            total_len = len(dataset_full)
             val_len = max(int(total_len * 0.1), 1)
             train_len = total_len - val_len
-            self.mnist_train, self.mnist_val = random_split(
-                mnist_full, [train_len, val_len]
+            self.dataset_train, self.dataset_val = random_split(
+                dataset_full, [train_len, val_len]
             )
 
         # Assign test dataset for use in dataloader(s)
         if stage == "test" or stage is None:
-            self.mnist_test = MNIST(
-                self.data_dir, train=False, transform=self.transform
-            )
+            if self.dataset_name == "caltech256":
+                self.dataset_test = Caltech256(self.data_dir, transform=self.transform)
+            else: 
+                self.dataset_test = dataset_factory[self.dataset_name](self.data_dir, train=True, transform=self.transform)            
 
         self.metric = {
             mcfg["name"]: METRIC_REGISTRY.get(mcfg["name"])(**mcfg["args"])
@@ -133,26 +149,26 @@ class Base(pl.LightningModule):
     def train_dataloader(self):
         train_loader = DataLoader(
             **self.cfg["data"]["args"]["train"]["loader"],
-            dataset=self.mnist_train,
+            dataset=self.dataset_train,
         )
         return train_loader
 
     def val_dataloader(self):
         val_loader = DataLoader(
-            **self.cfg["data"]["args"]["val"]["loader"], dataset=self.mnist_val
+            **self.cfg["data"]["args"]["val"]["loader"], dataset=self.dataset_val
         )
         return val_loader
 
     def test_dataloader(self):
         test_loader = DataLoader(
             **self.cfg["data"]["args"]["test"]["loader"],
-            dataset=self.mnist_test,
+            dataset=self.dataset_test,
         )
         return test_loader
 
     def configure_optimizers(self):
         optimizer = torch.optim.AdamW(self.parameters(), self.learning_rate)
-        train_set_len = len(self.mnist_train)
+        train_set_len = len(self.dataset_train)
         train_bs = self.cfg["data"]["args"]["train"]["loader"]["batch_size"]
 
         scheduler = torch.optim.lr_scheduler.OneCycleLR(
