@@ -9,7 +9,7 @@ global:
   pretrained: null
   resume: null
 model:
-  name: Lenet
+  name: LenetDropout
   args:
     IMG_SIZE: 28
     NUM_CLASS: 10

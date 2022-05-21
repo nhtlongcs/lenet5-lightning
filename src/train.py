@@ -21,9 +21,7 @@ def train(config):
     cp_path, train_id = prepare_checkpoint_path(
         config["global"]["save_dir"], config["global"]["name"]
     )
-    import pdb
 
-    pdb.set_trace()
     callbacks = [
         CALLBACKS_REGISTRY.get(mcfg["name"])(**mcfg["args"])
         for mcfg in config["callbacks"]
