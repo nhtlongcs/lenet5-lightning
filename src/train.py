@@ -21,7 +21,9 @@ def train(config):
     cp_path, train_id = prepare_checkpoint_path(
         config["global"]["save_dir"], config["global"]["name"]
     )
+    import pdb
 
+    pdb.set_trace()
     callbacks = [
         CALLBACKS_REGISTRY.get(mcfg["name"])(**mcfg["args"])
         for mcfg in config["callbacks"]
@@ -30,7 +32,7 @@ def train(config):
     Wlogger = WandbLogger(
         project="vnu-tgmt",
         name=train_id,
-        save_dir=config["global"]["save_dir"],
+        save_dir=cp_path,
         log_model="all",
         entity=config["global"]["username"],
     )

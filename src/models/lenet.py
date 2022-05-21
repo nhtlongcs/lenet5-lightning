@@ -38,7 +38,6 @@ class Lenet(Base):
         self.max_pool_2 = torch.nn.MaxPool2d(kernel_size=2)
         # Fully connected layer
         hidden_size = (IMG_SIZE // 2 - 4) // 2
-        print('hidden ===========> ', hidden_size)
         hidden_size = hidden_size * hidden_size * 16
         self.fc1 = torch.nn.Linear(
             hidden_size, 120
@@ -53,18 +52,18 @@ class Lenet(Base):
         self.loss = CrossEntropyLoss()
 
     def forward(self, x):
-         
-        x = F.relu(self.conv1(x)) # (batch_size, 6, IMG_SIZE, IMG_SIZE)
-        
+
+        x = F.relu(self.conv1(x))  # (batch_size, 6, IMG_SIZE, IMG_SIZE)
+
         # max-pooling with 2x2 grid
-        x = self.max_pool_1(x) # (batch_size, 6, IMG_SIZE // 2, IMG_SIZE // 2)
-        
+        x = self.max_pool_1(x)  # (batch_size, 6, IMG_SIZE // 2, IMG_SIZE // 2)
+
         # convolve, then perform ReLU non-linearity
         x = F.relu(self.conv2(x))  # (batch_size, 16, IMG_SIZE -4, IMG_SIZE -4)
-        
+
         # max-pooling with 2x2 grid
         x = self.max_pool_2(x)  # (batch_size, 16, IMG_SIZE // 2, IMG_SIZE // 2)
-        
+
         # first flatten 'max_pool_2_out' to contain batchsize x other columns
         x = x.view(x.shape[0], -1)
         # FC-1, then perform ReLU non-linearity

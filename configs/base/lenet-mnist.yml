@@ -1,6 +1,6 @@
 global:
   username: nhtlong
-  name: LeNet
+  name: LeNetMNIST
   save_dir: ./runs
   use_fp16: true
   debug: false
@@ -16,7 +16,7 @@ model:
 data:
   data_dir: ./data/
   image_size: 28
-  name: fashion_mnist
+  name: mnist
   args:
     train:
       loader:

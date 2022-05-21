@@ -1,0 +1,68 @@
+global:
+  username: nhtlong
+  name: LeNetMNIST
+  save_dir: ./runs
+  use_fp16: true
+  debug: false
+  verbose: true
+  SEED: 1337
+  pretrained: null
+  resume: null
+model:
+  name: Lenet
+  args:
+    IMG_SIZE: 28
+    NUM_CLASS: 10
+data:
+  data_dir: ./data/
+  image_size: 28
+  name: mnist
+  args:
+    train:
+      loader:
+        batch_size: 256
+        num_workers: 2
+        shuffle: True
+        drop_last: True
+    val:
+      loader:
+        batch_size: 256
+        num_workers: 2
+        shuffle: False
+        drop_last: False
+    test:
+      loader:
+        batch_size: 32
+        num_workers: 2
+        shuffle: False
+        drop_last: False
+metric:
+  - name: Accuracy
+    args:
+      num_classes: 10
+
+trainer:
+  lr: 0.01
+  num_epochs: 10000
+  evaluate_interval: 1
+  print_interval: 20
+  save_interval: 1000
+
+callbacks:
+  - name: ModelCheckpoint
+    args:
+      filename: "Lenet-{epoch}-{val_Accuracy:.4f}"
+      monitor: "val_Accuracy"
+      verbose: True
+      save_top_k: 3
+      mode: max
+  - name: EarlyStopping
+    args:
+      monitor: "val_Accuracy"
+      min_delta: 0.001
+      patience: 5
+      verbose: False
+      mode: max
+  - name: LearningRateMonitor
+    args:
+      logging_interval: step

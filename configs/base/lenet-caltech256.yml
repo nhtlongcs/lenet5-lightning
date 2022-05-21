@@ -1,6 +1,6 @@
 global:
   username: nhtlong
-  name: LeNet
+  name: LeNetCaltech
   save_dir: ./runs
   use_fp16: true
   debug: false
@@ -11,22 +11,22 @@ global:
 model:
   name: Lenet
   args:
-    IMG_SIZE: 28
-    NUM_CLASS: 10
+    IMG_SIZE: 256
+    NUM_CLASS: 257
 data:
   data_dir: ./data/
-  image_size: 28
-  name: mnist
+  image_size: 256
+  name: caltech256
   args:
     train:
       loader:
-        batch_size: 256
+        batch_size: 32
         num_workers: 2
         shuffle: True
         drop_last: True
     val:
       loader:
-        batch_size: 256
+        batch_size: 32
         num_workers: 2
         shuffle: False
         drop_last: False
@@ -39,7 +39,7 @@ data:
 metric:
   - name: Accuracy
     args:
-      num_classes: 10
+      num_classes: 257
 
 trainer:
   lr: 0.01
