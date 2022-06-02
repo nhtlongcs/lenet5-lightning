@@ -1,6 +1,6 @@
 # LetNet Pytorch Lightning
 
-This work is an unofficial implementation of LeNet5 on MNIST dataset, which is computer vision coursework.
+This work is an unofficial implementation of LeNet5 on multi dataset (include MNIST, FashionMNIST, Caltech256)
 
 Before using this repo, please install the following packages by running the following commands:
 
@@ -28,6 +28,6 @@ pip install -e .
 I provide simple scripts for training and testing purpose.
 
 ```bash
-$ ./tools/train.sh
-$ ./tools/test.sh <path-to-ckpt>
+$ ./tools/train.sh <cfg-path>
+$ ./tools/test.sh <cfg-path> <ckpt-path>
 ```
