@@ -1,6 +1,6 @@
 global:
   username: nhtlong
-  name: LeNetCaltech
+  name: LeNetDropOutCaltech
   save_dir: ./runs
   use_fp16: true
   debug: false
